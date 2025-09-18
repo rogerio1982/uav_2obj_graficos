@@ -11,9 +11,9 @@ class Uavs:
         self.D = D #Estação base conectada?
         self.PRB = PRB #Total de PRBs
         self.PRB_F = PRB_F #Total de PRBs disponiveis
-        self.F = F
-        self.C = C
-        self.I = I
+        self.F = F #frequencia
+        self.C = C #capcaidade total
+        self.I = I #interferencia
         self.Cob = Cob #cobe3rtura
         self.H = H #Atura
         self.Int = Int #interferencia

@@ -632,6 +632,52 @@ def local_search(individual, toolbox):
     
     return improved
 
+def plot_uav_altitudes_nsga(best_individual, out_dir='image_nsga'):
+    """Gera gráfico das altitudes dos UAVs para NSGA-II"""
+    try:
+        # Extrair dados dos UAVs da melhor solução
+        uav_ids = [f"UAV {i+1}" for i in range(uav)]
+        altitudes = []
+        
+        for i in range(uav):
+            h = best_individual[i*3+2]  # Altura do UAV i
+            altitudes.append(h)
+        
+        # Criar o gráfico
+        plt.figure(figsize=(10, 6))
+        
+        # Gráfico de barras
+        bars = plt.bar(uav_ids, altitudes, color='skyblue', edgecolor='navy', linewidth=1.5)
+        
+        # Adicionar valores nas barras
+        for i, (bar, alt) in enumerate(zip(bars, altitudes)):
+            plt.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1, 
+                    f'{alt:.1f}m', ha='center', va='bottom', fontweight='bold')
+        
+        # Configurar o gráfico
+        plt.title('Altitudes dos UAVs - NSGA-II', fontsize=14, fontweight='bold')
+        plt.xlabel('UAVs', fontsize=12)
+        plt.ylabel('Altura (m)', fontsize=12)
+        plt.grid(True, alpha=0.3, axis='y')
+        
+        # Configurar eixos
+        plt.ylim(0, hmax * 1.1)
+        plt.xticks(rotation=45)
+        
+        plt.tight_layout()
+        
+        # Salvar o gráfico
+        if not os.path.exists(out_dir):
+            os.makedirs(out_dir)
+        plt.savefig(os.path.join(out_dir, '6-uav_altitudes.png'), 
+                   dpi=300, bbox_inches='tight')
+        plt.close()
+        
+        print("Gráfico das altitudes dos UAVs (NSGA-II) gerado com sucesso!")
+        
+    except Exception as e:
+        print(f"Erro ao gerar gráfico das altitudes (NSGA-II): {str(e)}")
+
 def main():
     global s
     # Carregar usuários do CSV
@@ -920,7 +966,13 @@ def main():
     except Exception as e:
         print(f"Erro ao gerar gráfico 3D: {str(e)}")
 
-    
+    # Gráfico 6: Altitudes dos UAVs
+    try:
+        # Encontrar indivíduo com melhor número de usuários conectados
+        best_users_ind = max(pop, key=lambda x: x.fitness.values[0] if x.fitness.valid else 0.0)
+        plot_uav_altitudes_nsga(best_users_ind, out_dir)
+    except Exception as e:
+        print(f"Erro ao gerar gráfico de altitudes: {str(e)}")
     
     # Snapshot adicional: replicar cenário do smain.py e imprimir métricas de usuários conectados
     try:
